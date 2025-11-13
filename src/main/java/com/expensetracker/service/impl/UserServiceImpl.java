@@ -94,7 +94,62 @@ public class UserServiceImpl implements UserService {
         modReq.setRole(com.expensetracker.entity.Role.EMPLOYEE.name());
         modReq.setDepartmentId(deptId);
 
-        return registerUser(modReq);
+        // Create the user using the normal register flow, then set createdBy to caller id
+        User created = registerUser(modReq);
+        if (created != null && callerEmail != null) {
+            var callerOpt = userRepository.findFirstByEmail(callerEmail);
+            if (callerOpt.isPresent()) {
+                created.setCreatedBy(callerOpt.get().getUserId());
+                created = userRepository.save(created);
+            }
+        }
+
+        return created;
+    }
+
+    @Override
+    @Transactional
+    public void deleteEmployee(Integer employeeId, String callerEmail) {
+        var empOpt = userRepository.findById(employeeId);
+        if (empOpt.isEmpty()) {
+            throw new com.expensetracker.exception.ResourceNotFoundException("Employee not found");
+        }
+
+        var emp = empOpt.get();
+
+        // find caller
+        if (callerEmail == null) throw new org.springframework.security.access.AccessDeniedException("Missing caller");
+        var callerOpt = userRepository.findFirstByEmail(callerEmail);
+        if (callerOpt.isEmpty()) throw new org.springframework.security.access.AccessDeniedException("Caller not found");
+
+        var caller = callerOpt.get();
+
+        // Allow deletion when:
+        // - caller is ADMIN (can delete anyone), OR
+        // - caller is MANAGER and target is an EMPLOYEE (managers can delete any employee in this single-manager/HR model), OR
+        // - caller is the manager who originally created the employee (createdBy)
+        boolean allowed = false;
+        if (caller.getRole() == com.expensetracker.entity.Role.ADMIN) {
+            allowed = true;
+        } else if (caller.getRole() == com.expensetracker.entity.Role.MANAGER) {
+            // managers can delete employees (but not other managers/admins)
+            if (emp.getRole() == com.expensetracker.entity.Role.EMPLOYEE) {
+                allowed = true;
+            }
+            // also allow if manager originally created the employee
+            if (!allowed && emp.getCreatedBy() != null && emp.getCreatedBy().equals(caller.getUserId())) {
+                allowed = true;
+            }
+        } else {
+            // other roles not allowed
+            allowed = false;
+        }
+
+        if (allowed) {
+            userRepository.delete(emp);
+        } else {
+            throw new org.springframework.security.access.AccessDeniedException("Not allowed to delete this employee");
+        }
     }
 
     @Override

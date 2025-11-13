@@ -22,4 +22,7 @@ public interface UserService {
     User findByEmail(String email);
     // number of users in the system (used for bootstrap checks)
     long countUsers();
+    
+    // Delete an employee created by the calling manager. CallerEmail is used to verify ownership.
+    void deleteEmployee(Integer employeeId, String callerEmail);
 }
