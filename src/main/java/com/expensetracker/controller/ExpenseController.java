@@ -107,6 +107,58 @@ public class ExpenseController {
     return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, message, updated));
 }
 
+    // Employee: update own expense
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<?> updateExpense(
+        @PathVariable Integer id,
+        @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody ExpenseRequest request,
+        HttpServletRequest httpRequest) {
+
+        String callerEmail = (String) httpRequest.getAttribute("email");
+        Integer callerId = null;
+        if (callerEmail != null) {
+            User caller = userService.findByEmail(callerEmail);
+            if (caller != null) callerId = caller.getUserId();
+        }
+
+        Expense updated = expenseService.updateExpense(id, request, callerId);
+
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expense updated", updated));
+    }
+
+    // Employee: delete own expense
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<?> deleteExpense(@PathVariable Integer id, HttpServletRequest httpRequest) {
+        String callerEmail = (String) httpRequest.getAttribute("email");
+        Integer callerId = null;
+        if (callerEmail != null) {
+            User caller = userService.findByEmail(callerEmail);
+            if (caller != null) callerId = caller.getUserId();
+        }
+
+        expenseService.deleteExpense(id, callerId);
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expense deleted", null));
+    }
+
+    // Manager: list expenses by status, optionally scoped to department
+    @GetMapping("/status/{status}")
+    @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
+    public ResponseEntity<?> getExpensesByStatus(@PathVariable String status, @org.springframework.web.bind.annotation.RequestParam(required = false) Integer departmentId, HttpServletRequest httpRequest) {
+        // If departmentId not provided, infer from manager's profile
+        Integer deptId = departmentId;
+        if (deptId == null) {
+            String callerEmail = (String) httpRequest.getAttribute("email");
+            if (callerEmail != null) {
+                User caller = userService.findByEmail(callerEmail);
+                if (caller != null) deptId = caller.getDepartmentId();
+            }
+        }
+
+        java.util.List<Expense> list = expenseService.getExpensesByStatus(status, deptId);
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", list));
+    }
 
 
 }

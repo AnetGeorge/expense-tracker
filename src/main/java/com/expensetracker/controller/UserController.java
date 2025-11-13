@@ -39,6 +39,28 @@ public class UserController {
         return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "User registered successfully", created));
     }
 
+    /**
+     * Bootstrap endpoint: create the very first user (manager/admin) when the system has no users yet.
+     * This endpoint is public but will only succeed when user count == 0. After the first user is created
+     * it becomes a no-op and returns 403.
+     */
+    @PostMapping("/bootstrap")
+    public ResponseEntity<?> bootstrap(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request) {
+        long count = userService.countUsers();
+        if (count > 0) {
+            return ResponseEntity.status(403).body(com.expensetracker.dto.ApiResponse.error(403, "Bootstrap not allowed: users already exist", null));
+        }
+
+        // Ensure role from request is manager/admin; otherwise default to MANAGER for bootstrap safety
+        if (request.getRole() == null) {
+            request.setRole(com.expensetracker.entity.Role.MANAGER.name());
+        }
+
+        User created = userService.registerUser(request);
+        if (created != null) created.setPassword(null);
+        return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "Bootstrap user created", created));
+    }
+
 
 
    @Autowired

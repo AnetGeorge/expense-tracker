@@ -106,4 +106,9 @@ public class UserServiceImpl implements UserService {
     public User findByEmail(String email) {
         return userRepository.findFirstByEmail(email).orElse(null);
     }
+
+    @Override
+    public long countUsers() {
+        return userRepository.count();
+    }
 }

@@ -20,4 +20,6 @@ public interface UserService {
 
     List<User> getAllEmployees();
     User findByEmail(String email);
+    // number of users in the system (used for bootstrap checks)
+    long countUsers();
 }
