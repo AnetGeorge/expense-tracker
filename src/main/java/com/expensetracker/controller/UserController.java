@@ -16,7 +16,6 @@ import com.expensetracker.dto.LoginRequest;
 import com.expensetracker.dto.LoginResponse;
 import com.expensetracker.dto.RegisterRequest;
 import com.expensetracker.dto.ResponseMessage;
-import com.expensetracker.entity.Role;
 import com.expensetracker.entity.User;
 import com.expensetracker.security.JwtUtil;
 import com.expensetracker.service.UserService;
@@ -32,29 +31,12 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
+    @PreAuthorize("hasRole('MANAGER')")
     public ResponseEntity<?> register(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request) {
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-        // Map role string (if provided) to enum; default to EMPLOYEE
-        try {
-            if (request.getRole() != null) {
-                user.setRole(com.expensetracker.entity.Role.valueOf(request.getRole().toUpperCase()));
-            } else {
-                user.setRole(com.expensetracker.entity.Role.EMPLOYEE);
-            }
-        } catch (IllegalArgumentException e) {
-            // unknown role - default to EMPLOYEE
-            user.setRole(com.expensetracker.entity.Role.EMPLOYEE);
-        }
-        user.setDepartmentId(request.getDepartmentId());
-
-        User created = userService.registerUser(user); // persist user
-        // Do not expose password
+        User created = userService.registerUser(request); // service maps DTO -> entity and persists
         if (created != null) created.setPassword(null);
 
-    return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "User registered successfully", created));
+        return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "User registered successfully", created));
     }
 
 
@@ -93,30 +75,13 @@ private JwtUtil jwtUtil;
     @PostMapping("/employee")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<?> addEmployee(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
+        // Derive caller email (if present) so service can infer department when needed
+        String callerEmail = (String) httpRequest.getAttribute("email");
 
-        User user = new User();
-        user.setName(request.getName());
-        user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
-
-        // If departmentId not provided, try to derive from the caller (manager)
-        Integer deptId = request.getDepartmentId();
-        if (deptId == null) {
-            // try to get caller email from request attribute set by JwtFilter
-            String callerEmail = (String) httpRequest.getAttribute("email");
-            if (callerEmail != null) {
-                User caller = userService.findByEmail(callerEmail);
-                if (caller != null) deptId = caller.getDepartmentId();
-            }
-        }
-
-        user.setDepartmentId(deptId);
-        user.setRole(Role.EMPLOYEE);
-
-        User created = userService.createEmployee(user);
+        User created = userService.createEmployee(request, callerEmail);
         if (created != null) created.setPassword(null);
 
-    return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "Employee created successfully", created));
+        return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "Employee created successfully", created));
     }
 
     @GetMapping("/employees")

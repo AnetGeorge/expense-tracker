@@ -25,19 +25,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public User registerUser(User user) {
+    public User registerUser(com.expensetracker.dto.RegisterRequest request) {
         // Check duplicate email
-        if (user.getEmail() != null && userRepository.findFirstByEmail(user.getEmail()).isPresent()) {
+        if (request.getEmail() != null && userRepository.findFirstByEmail(request.getEmail()).isPresent()) {
             throw new com.expensetracker.exception.DuplicateResourceException("User with email already exists");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // default role if not provided
-        if (user.getRole() == null) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // Map/normalize role if provided, default to EMPLOYEE
+        if (request.getRole() != null) {
+            try {
+                user.setRole(com.expensetracker.entity.Role.valueOf(request.getRole().toUpperCase()));
+            } catch (IllegalArgumentException ex) {
+                user.setRole(com.expensetracker.entity.Role.EMPLOYEE);
+            }
+        } else {
             user.setRole(com.expensetracker.entity.Role.EMPLOYEE);
         }
 
-        return userRepository.save(user); // Transaction commits automatically
+        user.setDepartmentId(request.getDepartmentId());
+
+        return userRepository.save(user);
     }
 
     @Override
@@ -64,9 +76,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User createEmployee(User user) {
-        user.setRole(com.expensetracker.entity.Role.EMPLOYEE);
-        return registerUser(user);
+    public User createEmployee(com.expensetracker.dto.RegisterRequest request, String callerEmail) {
+        // If departmentId not present in request, try to derive from caller (manager)
+        Integer deptId = request.getDepartmentId();
+        if (deptId == null && callerEmail != null) {
+            var callerOpt = userRepository.findFirstByEmail(callerEmail);
+            if (callerOpt.isPresent()) {
+                deptId = callerOpt.get().getDepartmentId();
+            }
+        }
+
+        // Force role to EMPLOYEE regardless of request
+        com.expensetracker.dto.RegisterRequest modReq = new com.expensetracker.dto.RegisterRequest();
+        modReq.setName(request.getName());
+        modReq.setEmail(request.getEmail());
+        modReq.setPassword(request.getPassword());
+        modReq.setRole(com.expensetracker.entity.Role.EMPLOYEE.name());
+        modReq.setDepartmentId(deptId);
+
+        return registerUser(modReq);
     }
 
     @Override
@@ -76,6 +104,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByEmail(String email) {
-    return userRepository.findFirstByEmail(email).orElse(null);
+        return userRepository.findFirstByEmail(email).orElse(null);
     }
 }
