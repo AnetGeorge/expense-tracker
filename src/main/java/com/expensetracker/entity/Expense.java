@@ -31,5 +31,5 @@ public class Expense {
     private String receiptUrl;
     private String status;
     private Integer approvedBy;
-    private String remarks;
+     private String remarks;
 }

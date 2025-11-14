@@ -4,14 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/**
- * Standard API response shape desired by the user:
- * {
- *   "status": 200,
- *   "message": "...",
- *   "body": { ... }
- * }
- */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

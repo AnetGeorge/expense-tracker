@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.expensetracker.dto.LoginRequest;
 import com.expensetracker.dto.LoginResponse;
 import com.expensetracker.dto.RegisterRequest;
+import com.expensetracker.dto.UserResponse;
 import com.expensetracker.entity.User;
 import com.expensetracker.security.JwtUtil;
 import com.expensetracker.service.UserService;
@@ -31,7 +32,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request) {
-        User created = userService.registerUser(request); // service maps DTO -> entity and persists
+        User created = userService.registerUser(request); 
         if (created != null) created.setPassword(null);
 
         return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "User registered successfully", created));
@@ -86,8 +87,20 @@ private JwtUtil jwtUtil;
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<?> getEmployees() {
         java.util.List<User> list = userService.getAllEmployees();
-        if (list != null) list.forEach(u -> { if (u != null) u.setPassword(null); });
-    return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Employees fetched", list));
+        java.util.List<UserResponse> out = new java.util.ArrayList<>();
+        if (list != null) {
+            for (User u : list) {
+                if (u == null) continue;
+                UserResponse ur = new UserResponse();
+                ur.setUserId(u.getUserId());
+                ur.setName(u.getName());
+                ur.setEmail(u.getEmail());
+                ur.setRole(u.getRole());
+                ur.setDepartmentId(u.getDepartmentId());
+                out.add(ur);
+            }
+        }
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Employees fetched", out));
     }
 
     // Manager: delete an employee they created (or ADMIN can delete any employee)

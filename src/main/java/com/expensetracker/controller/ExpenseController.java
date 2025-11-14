@@ -1,7 +1,5 @@
 package com.expensetracker.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.expensetracker.dto.ApproveRequest;
 import com.expensetracker.dto.ExpenseRequest;
+import com.expensetracker.dto.ExpenseResponse;
 import com.expensetracker.entity.Expense;
 import com.expensetracker.entity.User;
 import com.expensetracker.service.ExpenseService;
@@ -47,7 +46,7 @@ public class ExpenseController {
         expense.setCategoryId(request.getCategoryId());
         expense.setDate(request.getDate());
         expense.setDescription(request.getDescription());
-        // set userId and department from authenticated user if available
+        
         if (user != null) {
             expense.setUserId(user.getUserId());
             expense.setDepartmentId(user.getDepartmentId());
@@ -57,14 +56,16 @@ public class ExpenseController {
         }
 
         Expense saved = expenseService.addExpense(expense);
-        if (saved != null) saved.setDescription(saved.getDescription());
-    return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "Expense created", saved));
+        ExpenseResponse resp = toResponse(saved);
+        return ResponseEntity.status(201).body(com.expensetracker.dto.ApiResponse.success(201, "Expense created", resp));
     }
 
     @GetMapping("/user/{userId}")
      @PreAuthorize("hasRole('MANAGER') or hasRole('EMPLOYEE')")
-    public ResponseEntity<List<Expense>> getExpensesByUser(@PathVariable Integer userId) {
-        return ResponseEntity.ok(expenseService.getExpensesByUser(userId));
+    public ResponseEntity<?> getExpensesByUser(@PathVariable Integer userId) {
+        java.util.List<Expense> list = expenseService.getExpensesByUser(userId);
+        java.util.List<ExpenseResponse> out = list.stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", out));
     }
 
         @PutMapping("/approve/{id}")
@@ -104,7 +105,7 @@ public class ExpenseController {
             message = "Expense status updated successfully";
     }
 
-    return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, message, updated));
+    return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, message, toResponse(updated)));
 }
 
     // Employee: update own expense
@@ -124,7 +125,7 @@ public class ExpenseController {
 
         Expense updated = expenseService.updateExpense(id, request, callerId);
 
-        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expense updated", updated));
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expense updated", toResponse(updated)));
     }
 
     // Employee: delete own expense
@@ -157,7 +158,23 @@ public class ExpenseController {
         }
 
         java.util.List<Expense> list = expenseService.getExpensesByStatus(status, deptId);
-        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", list));
+        java.util.List<ExpenseResponse> out = list.stream().map(this::toResponse).toList();
+        return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", out));
+    }
+
+    // mapper: Expense -> ExpenseResponse (intentionally exclude approvedBy, remarks, receiptUrl)
+    private ExpenseResponse toResponse(Expense e) {
+        if (e == null) return null;
+        ExpenseResponse r = new ExpenseResponse();
+        r.setExpenseId(e.getExpenseId());
+        r.setUserId(e.getUserId());
+        r.setDepartmentId(e.getDepartmentId());
+        r.setCategoryId(e.getCategoryId());
+        r.setAmount(e.getAmount());
+        r.setDate(e.getDate());
+        r.setDescription(e.getDescription());
+        r.setStatus(e.getStatus());
+        return r;
     }
 
 
