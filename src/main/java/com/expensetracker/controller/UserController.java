@@ -70,7 +70,7 @@ private JwtUtil jwtUtil;
     return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Managers fetched", list));
     }
 
-    // Manager or Admin can create an employee
+    // Manager can create an employee
     @PostMapping("/employee")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<?> addEmployee(@jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
@@ -103,7 +103,7 @@ private JwtUtil jwtUtil;
         return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Employees fetched", out));
     }
 
-    // Manager: delete an employee they created (or ADMIN can delete any employee)
+    // Manager: delete an employee they created 
     @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
     @PreAuthorize("hasRole('MANAGER') or hasRole('ADMIN')")
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id, HttpServletRequest request) {

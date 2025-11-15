@@ -38,7 +38,7 @@ public class User {
     @Column(name = "department_id")
     private Integer departmentId;
 
-    // user id of the manager/admin who created this user (nullable)
+    
     @Column(name = "created_by")
     private Integer createdBy;
 

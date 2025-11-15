@@ -124,10 +124,7 @@ public class UserServiceImpl implements UserService {
 
         var caller = callerOpt.get();
 
-        // Allow deletion when:
-        // - caller is ADMIN (can delete anyone), OR
-        // - caller is MANAGER and target is an EMPLOYEE (managers can delete any employee in this single-manager/HR model), OR
-        // - caller is the manager who originally created the employee (createdBy)
+       
         boolean allowed = false;
         if (caller.getRole() == com.expensetracker.entity.Role.ADMIN) {
             allowed = true;

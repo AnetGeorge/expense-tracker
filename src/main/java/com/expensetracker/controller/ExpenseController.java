@@ -64,6 +64,9 @@ public class ExpenseController {
      @PreAuthorize("hasRole('MANAGER') or hasRole('EMPLOYEE')")
     public ResponseEntity<?> getExpensesByUser(@PathVariable Integer userId) {
         java.util.List<Expense> list = expenseService.getExpensesByUser(userId);
+        if (list == null || list.isEmpty()) {
+            throw new com.expensetracker.exception.ResourceNotFoundException("No expenses found for user id " + userId);
+        }
         java.util.List<ExpenseResponse> out = list.stream().map(this::toResponse).toList();
         return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", out));
     }
@@ -158,6 +161,11 @@ public class ExpenseController {
         }
 
         java.util.List<Expense> list = expenseService.getExpensesByStatus(status, deptId);
+        if (list == null || list.isEmpty()) {
+            String msg = "No expenses found with status '" + status + "'";
+            if (deptId != null) msg += " in department " + deptId;
+            throw new com.expensetracker.exception.ResourceNotFoundException(msg);
+        }
         java.util.List<ExpenseResponse> out = list.stream().map(this::toResponse).toList();
         return ResponseEntity.ok(com.expensetracker.dto.ApiResponse.success(200, "Expenses fetched", out));
     }
