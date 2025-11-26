@@ -1,0 +1,23 @@
+.topbar {
+  width: 100%;
+  padding: 15px 20px 5px 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-text {
+  font-weight: 600;
+}
+
+.topbar-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #b6e8e8, #0c7b8a);
+}

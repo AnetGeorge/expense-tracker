@@ -1,0 +1,8 @@
+:root{
+  --primary:#0f8192;
+  --accent:#60c1c5;
+  --light:#dff7f6;
+  --card-bg: #ffffff;
+  --radius: 16px;
+  --shadow: 0 8px 20px rgba(3, 20, 20, 0.06);
+}

@@ -1,0 +1,75 @@
+/* Sidebar Base */
+.sidebar {
+  width: 300px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #9be7e8, #2a95a3, #0f7c8c);
+  color: #345;
+  border-top-right-radius: 25px;
+  border-bottom-right-radius: 25px;
+
+  /* fixed on the left so content can scroll independently */
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  z-index: 1000;
+}
+
+/* Brand */
+.sidebar-brand {
+  font-size: 24px;          /* bigger */
+  font-weight: 800;         /* bold */
+  margin-bottom: 45px;
+  letter-spacing: 0.5px;
+}
+
+/* Links container */
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-size: 18px;          /* increased from 15px */
+  font-weight: 600;
+}
+
+/* Sidebar Link Style */
+.sidebar-links a {
+  color: #345;         /* soft white */
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  transition: 0.25s ease;
+  position: relative;
+}
+
+/* Active + Hover effect */
+.sidebar-links a.active,
+.sidebar-links a:hover {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.20));
+  color: #fff;
+  transform: translateX(4px);       /* gentle slide right */
+  box-shadow: 0 6px 14px rgba(255, 255, 255, 0.18); /* glowing white */
+}
+
+/* Logout button */
+.logout-link {
+  margin-top: auto !important;
+  color: #345;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* Responsive: on narrow screens keep sidebar inline */
+@media (max-width: 900px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+    height: auto;
+    left: auto;
+    top: auto;
+    bottom: auto;
+  }
+}

@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+*{box-sizing:border-box}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #e5f3f3;
+}
+
+/* prevent horizontal scrolling across the app */
+html, body {
+  overflow-x: hidden;
+}
+
+.layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  flex: 1;
+  background: white;
+  margin: 20px;
+  padding: 30px;
+  border-radius: 25px;
+  overflow-y: auto;
+}
+
+/* Responsive utilities and defaults */
+:root{
+  --page-max-width: 1200px;
+  --gap: 18px;
+  --container-padding: 20px;
+}
+
+/* make images and media fluid by default */
+img, picture, video, svg, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* responsive container that centers content */
+.container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* reduce spacing & radius on small screens */
+@media (max-width: 900px) {
+  .content-wrapper { margin: 12px; padding: 16px; border-radius: 12px; }
+  .h-title { font-size: 18px; }
+  .row { gap: 12px; }
+}
+
+/* stack columns on small screens */
+@media (max-width: 640px) {
+  .row { flex-direction: column; gap: 12px; }
+  .col { gap: 10px; }
+}
+
+/* body{
+  margin:0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg, #f6fbfb 0%, #e9f6f6 100%);
+  color:#073233;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+} */
+
+/* .layout { display:flex; min-height:100vh; } */
+.content { flex:1; padding:28px; }
+
+.card{
+  background:var(--card-bg);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding:18px;
+}
+
+/* small helpers */
+.row { display:flex; gap:18px; align-items:center; }
+.col { display:flex; flex-direction:column; gap:12px; }
+.h-title { margin:0 0 8px 0; font-weight:700; font-size:20px; }
+.small { font-size:14px; color:#567; }
+
+/* table basics */
+.table {
+  width:100%;
+  border-collapse: collapse;
+}
+.table th, .table td { padding:10px 12px; border-bottom:1px solid #e8f0f0; text-align:left; }
+.badge { padding:6px 10px; border-radius:999px; font-weight:600; font-size:13px; display:inline-block; }
+.badge.approved { background:#e6fbf5; color:#11825b; }
+.badge.declined { background:#fff1f1; color:#b80b0b; }

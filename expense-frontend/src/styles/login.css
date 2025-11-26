@@ -1,0 +1,148 @@
+:root {
+  --primary-stroke: #03768A;
+  --input-bg: #C2E2E5;
+  --button-bg: #2A949E;
+  --modal-bg-top: #EEEEEE;
+  --modal-bg-bottom: #80CECF;
+}
+
+/* Base layout for the page */
+.login-root {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f8f8;
+}
+
+/* Left Illustration */
+.left-art {
+  flex: 1;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.left-illustration-container {
+  max-width: 520px;
+  height: auto;
+}
+
+.left-illustration-container img {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  background: #fff;
+  padding: 18px;
+  box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+}
+
+/* Right Wrapper */
+.right-card-wrapper {
+  flex: 0 0 600px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  background: #fff;
+  padding: 40px 80px 40px 20px;
+}
+
+/* Outer panel */
+.right-panel {
+  width: 100%;
+  border-radius: 24px;
+  position: relative;
+  z-index: 2;
+  background: #fff;
+}
+
+/* LOGIN CARD */
+.login-card {
+  width: 600px;
+  height: 650px; /* UPDATED HEIGHT */
+  padding: 40px 40px;
+  border-radius: 22px;
+  transform: translateX(-160px);
+  
+
+  /* NEW GRADIENT */
+  background: linear-gradient(
+    180deg,
+    var(--modal-bg-top) 0%,
+    var(--modal-bg-bottom) 100%
+  );
+
+  box-shadow: 0px 30px 30px rgba(0, 0, 0, 0.25);
+  margin-right: 10px;
+}
+
+/* Title */
+.login-card h2 {
+  margin: 0 0 6px;
+  font-family: "Inter", sans-serif;
+  font-weight: 700; /* Inter Bold */
+  font-size: 46px;
+  margin-bottom: 12px;
+  margin-top: 60px;
+  
+}
+
+/* Subtitle */
+.login-card p {
+  margin: 0 0 24px;
+  color: #567;
+  font-family: "Inter", sans-serif;
+  font-weight: 200; /* Extra Light */
+  font-size: 16px;
+  margin-bottom: 100px;
+}
+
+/* Input Labels */
+.input-group label {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Inter", sans-serif;
+  margin-bottom: 5px;
+  color: #345;
+  display: block;
+}
+
+/* Input Fields */
+.login-card input {
+  width: 100%;
+  padding: 18px 18px;
+  border-radius: 12px;
+  background-color: var(--input-bg);
+  border: 2px solid var(--primary-stroke);
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Button */
+.login-card button {
+  margin-top: 26px;
+  width: 100%;
+  padding: 18px 18px;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--button-bg);
+  color: white;
+  font-weight: 700;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 2px solid var(--primary-stroke);
+}
+
+.login-card button:hover {
+  opacity: 0.85;
+}
+.input-group {
+  margin-bottom: 32px; /* space btw input field */
+}
+.login-card button {
+  margin-top: -17px; /*  Space before the login button */
+}

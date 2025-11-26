@@ -1,0 +1,283 @@
+.layout {
+  display: flex;
+  width: 100%;
+}
+
+.content {
+  flex: 1;
+  padding: 20px 30px;
+  /* account for fixed sidebar on large screens */
+  margin-left: 340px;
+  height: calc(100vh - 40px);
+  overflow-y: auto;
+}
+
+.page-title {
+  margin-top: 5px;
+  font-size: 36px;
+  font-weight: 700;
+  color: #084C52; 
+}
+
+.subtitle {
+  margin-top: -10px;
+  margin-bottom: 45px;
+  color: #666;
+  font-size: 20px;
+  color: #084C52; 
+}
+
+/* Banner */
+.banner {
+  background: linear-gradient(to right,#0f7c8c,#5FB8BC,#5FB8BC,#80CECF,#C4EAEE,#3EA2A9,#0f7c8c);
+  padding: 50px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: white;
+  margin-bottom: 30px;
+  overflow: visible; 
+  height: 250px; 
+}
+
+/* ensure absolutely positioned banner images are positioned relative to the banner
+   so they move when the content scrolls (not fixed to the viewport) */
+.banner { position: relative; }
+
+/* Banner heading */
+.banner h3 {
+  font-size: 30px;      /* bigger */
+  font-weight: 700;
+  color: #084C52; 
+}
+
+/* Banner paragraph */
+.banner p {
+  font-size: 18px;      /* bigger */
+  margin-top: 8px;
+  color: #084C52; 
+}
+/* .banner-img {
+  width: 260px;
+} */
+.banner-img {
+  position: absolute;
+  right: -40px;   /* move outside banner horizontally */
+  bottom: -40px;  /* small negative offset so image overlaps banner edge */
+  width: 550px;   /* make it bigger */
+  height: auto;
+  transform: rotate(0deg); /* optional – rotate a bit if you want */
+}
+
+.banner-img1 {
+  position: absolute;
+  right: -10px;   /* move outside banner horizontally */
+  bottom: -130px;
+  width: 800px;   /* make it bigger */
+  height: auto;
+  transform: rotate(0deg); /* optional – rotate a bit if you want */
+}
+/* Info Cards Row */
+.info-card-row {
+  display: flex;
+  gap: 20px;
+}
+
+/* Updated Card */
+.info-card {
+  background: linear-gradient(180deg, #FDFDFD 0%, #C2E2E5 50%, #67B9C0 100%,#0f7c8c );
+  padding: 22px;
+  border-radius: 18px; 
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.10);
+  
+  flex: 1;
+  height: 190px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;     /* centers vertically */
+  align-items: center;          /* centers horizontally */
+  text-align: center;
+}
+.info-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+/* Title */
+.info-card h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #345;
+  margin-top: 30px;
+}
+
+/* Big Number */
+.info-card h2 {
+  font-size: 58px;
+  margin-top: 24px;   /* reduced, looks cleaner */
+  font-weight: 700;
+  color: #084C52;     /* looks best on your gradient */
+}
+
+/* Manager charts */
+.chart-row {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+@media (max-width: 900px) {
+  .content {
+    margin-left: 0;
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* Banner and info-card adjustments for smaller screens */
+@media (max-width: 900px) {
+  .banner { padding: 28px; height: auto; display: block; }
+  .banner h3 { font-size: 22px; }
+  .banner p { font-size: 15px; }
+  .banner-img, .banner-img1 { display: none; }
+  .info-card-row { flex-direction: column; }
+  .info-card { height: auto; padding: 16px; }
+  .info-card h2 { font-size: 36px; }
+}
+
+@media (max-width: 480px) {
+  .page-title { font-size: 24px; }
+  .subtitle { font-size: 16px; margin-bottom: 18px; }
+  .banner { padding: 18px; }
+  .info-card h2 { font-size: 28px; }
+}
+
+.chart-card {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  flex: 1;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card.small {
+  width: 260px;
+}
+
+.chart-placeholder {
+  height: 120px;
+  background: #e8f4f4;
+  border-radius: 10px;
+  margin-top: 15px;
+}
+
+
+
+/* Wrapper */
+.recent-requests-container {
+  width: 100%;
+  padding: 10px 5px;
+}
+
+/* Loading + Empty States */
+.recent-loading,
+.recent-empty {
+  text-align: center;
+  color: #777;
+  padding: 10px 0;
+}
+
+/* List */
+.recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each Item */
+.recent-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 15px;
+  /* background: #ffffff; */
+  background: linear-gradient(180deg, #FDFDFD 0%, #C2E2E5 50%, #67B9C0 100%,#0f7c8c );
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border: 1px solid #e8e8e8;
+  transition: 0.2s ease;
+}
+
+.recent-item:hover {
+  box-shadow: 0px 4px 10px rgba(0,0,0,0.07);
+  transform: translateY(-2px);
+}
+
+/* Left side */
+.recent-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222;
+}
+
+.recent-date {
+  font-size: 12px;
+  margin-top: 3px;
+  color: #7a7a7a;
+}
+
+/* Right side */
+.recent-right {
+  text-align: right;
+}
+
+.recent-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0a6a5b;
+}
+
+/* Status Badges */
+.status-badge {
+  margin-top: 5px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Colors by status */
+.status-badge.pending {
+  background: #fff6d4;
+  color: #b49a04;
+}
+
+.status-badge.approved {
+  background: #d4ffdf;
+  color: #097d4c;
+}
+
+.status-badge.rejected {
+  background: #ffd6d6;
+  color: #b10909;
+}
+.show-more-btn {
+  background: linear-gradient(90deg, #00727A, #1AC2CE);
+  color: white;
+  padding: 10px 22px;
+  font-size: 14px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 114, 122, 0.3);
+}
+
+.show-more-btn:hover {
+  box-shadow: 0 6px 14px rgba(0, 114, 122, 0.45);
+  transform: scale(1.05);
+}
